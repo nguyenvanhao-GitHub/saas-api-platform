@@ -1,0 +1,87 @@
+variables:
+  DOCKER_TLS_CERTDIR: ''
+  DOCKER_DRIVER: overlay2
+  GIT_STRATEGY: clone
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+image: maven:3.9.6-eclipse-temurin-21-alpine
+
+services:
+  - name: docker:27-dind
+    alias: docker
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .m2/repository
+
+before_script:
+  - export CURRENT_TIME=$(date +"%d%m%y")
+  - export TAG=$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA-$CURRENT_TIME
+  - echo "Pipeline running for tag: $TAG"
+
+stages:
+  - build
+  - test
+  - docker-testing
+  - docker-production
+
+# ---------------------------------------------------------------------------
+# Stage 1: Build Java Package
+# ---------------------------------------------------------------------------
+build:
+  stage: build
+  script:
+    - mvn clean compile
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - target/
+
+# ---------------------------------------------------------------------------
+# Stage 2: Unit Test
+# ---------------------------------------------------------------------------
+test:
+  stage: test
+  script:
+    - mvn test
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - target/surefire-reports/TEST-*.xml
+
+# ---------------------------------------------------------------------------
+# Stage 3: Build & Push Docker Image Testing
+# ---------------------------------------------------------------------------
+docker-testing:
+  stage: docker-testing
+  image: docker:27
+  before_script:
+    - export TAG=$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA-$(date +"%d%m%y")
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u "$CI_REGISTRY_USER" --password-stdin
+  script:
+    - docker build -f Dockerfile -t $CI_REGISTRY_IMAGE:$TAG -t $CI_REGISTRY_IMAGE:testing-latest .
+    - docker push $CI_REGISTRY_IMAGE:$TAG
+    - docker push $CI_REGISTRY_IMAGE:testing-latest
+  only:
+    - testing
+    - develop
+
+# ---------------------------------------------------------------------------
+# Stage 4: Build & Push Docker Image Production
+# ---------------------------------------------------------------------------
+docker-production:
+  stage: docker-production
+  image: docker:27
+  before_script:
+    - export TAG=$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA-$(date +"%d%m%y")
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u "$CI_REGISTRY_USER" --password-stdin
+  script:
+    - docker build -f Dockerfile -t $CI_REGISTRY_IMAGE:$TAG -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$TAG
+    - docker push $CI_REGISTRY_IMAGE:latest
+  only:
+    refs:
+      - main
+      - "/^v[0-9]+\\.[0-9]+\\.[0-9]+$/"

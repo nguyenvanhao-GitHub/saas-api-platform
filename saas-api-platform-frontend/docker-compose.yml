@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  saas-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.Production
+    container_name: saas_frontend_app
+    restart: unless-stopped
+    ports:
+      - "4200:80"
+    networks:
+      - saas-network
+
+networks:
+  saas-network:
+    name: saas-network
+    driver: bridge

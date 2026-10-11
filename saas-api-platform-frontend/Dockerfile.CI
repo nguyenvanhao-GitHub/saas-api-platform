@@ -1,0 +1,14 @@
+# Image CI dùng cho job kiểm thử và build Frontend
+FROM node:20-alpine
+
+RUN apk add --no-cache \
+      chromium \
+      nss \
+      freetype \
+      harfbuzz \
+      ttf-freefont \
+ && rm -rf /var/cache/apk/* \
+ && ln -sf "$(command -v chromium-browser || command -v chromium)" /usr/bin/chrome-ci \
+ && /usr/bin/chrome-ci --version
+
+ENV CHROME_BIN=/usr/bin/chrome-ci

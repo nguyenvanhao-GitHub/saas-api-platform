@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chào mừng bạn đến với SaaS API Platform</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #0b0f19; color: #f1f5f9; margin: 0; padding: 40px 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: #111827; border: 1px solid #1f2937; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .header { background: linear-gradient(135deg, #4f46e5, #7c3aed); padding: 32px; text-align: center; }
+        .header h1 { margin: 0; color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+        .header p { margin: 8px 0 0 0; color: #e0e7ff; font-size: 14px; }
+        .content { padding: 32px; line-height: 1.6; font-size: 14px; color: #cbd5e1; }
+        .key-box { background: #030712; border: 1px solid #374151; border-radius: 12px; padding: 16px; margin: 24px 0; }
+        .key-title { font-size: 11px; text-transform: uppercase; font-weight: 700; color: #9ca3af; letter-spacing: 0.5px; margin-bottom: 8px; }
+        .key-value { font-family: 'Courier New', Courier, monospace; font-size: 15px; font-weight: bold; color: #38bdf8; word-break: break-all; }
+        .btn { display: inline-block; background: #6366f1; color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 10px; font-weight: 600; font-size: 14px; margin-top: 16px; }
+        .footer { background: #030712; border-top: 1px solid #1f2937; padding: 20px; text-align: center; font-size: 12px; color: #64748b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SaaS API Management Platform</h1>
+            <p>Khởi tạo tài khoản nhà phát triển thành công</p>
+        </div>
+        <div class="content">
+            <p>Xin chào <strong th:text="${fullName}" style="color: #ffffff;">Developer</strong>,</p>
+            <p>Chào mừng bạn gia nhập nền tảng <strong>SaaS API Platform</strong>. Tài khoản của bạn đã sẵn sàng để tích hợp và kiểm thử các dịch vụ API doanh nghiệp hàng đầu.</p>
+            
+            <div class="key-box">
+                <div class="key-title">Production API Key của bạn:</div>
+                <div class="key-value" th:text="${apiKey}">sk_live_sample_key_123456</div>
+            </div>
+
+            <p>Lưu ý quan trọng: Vui lòng bảo mật API Key này và chỉ truyền qua header <code>X-API-KEY</code> trong các lệnh gọi Gateway.</p>
+
+            <div style="text-align: center;">
+                <a th:href="${dashboardUrl}" class="btn">Truy Cập Developer Dashboard</a>
+            </div>
+        </div>
+        <div class="footer">
+            &copy; 2026 SaaS API Platform Inc. Mọi quyền được bảo lưu.
+        </div>
+    </div>
+</body>
+</html>

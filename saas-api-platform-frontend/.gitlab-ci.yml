@@ -1,0 +1,75 @@
+variables:
+  DOCKER_TLS_CERTDIR: ''
+  DOCKER_DRIVER: overlay2
+  GIT_STRATEGY: clone
+
+image: node:20-alpine
+
+services:
+  - name: docker:27-dind
+    alias: docker
+
+cache:
+  key:
+    files:
+      - package-lock.json
+  paths:
+    - .npm/
+
+before_script:
+  - export CURRENT_TIME=$(date +"%d%m%y")
+  - export TAG=$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA-$CURRENT_TIME
+  - echo "Frontend Pipeline running for tag: $TAG"
+
+stages:
+  - build
+  - docker-testing
+  - docker-production
+
+# ---------------------------------------------------------------------------
+# Stage 1: Build & Typecheck
+# ---------------------------------------------------------------------------
+build:
+  stage: build
+  script:
+    - npm ci --cache .npm --prefer-offline
+    - npm run build
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - dist/
+
+# ---------------------------------------------------------------------------
+# Stage 2: Docker Build & Push Testing
+# ---------------------------------------------------------------------------
+docker-testing:
+  stage: docker-testing
+  image: docker:27
+  before_script:
+    - export TAG=$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA-$(date +"%d%m%y")
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u "$CI_REGISTRY_USER" --password-stdin
+  script:
+    - docker build -f Dockerfile.Testing -t $CI_REGISTRY_IMAGE:$TAG -t $CI_REGISTRY_IMAGE:testing-latest .
+    - docker push $CI_REGISTRY_IMAGE:$TAG
+    - docker push $CI_REGISTRY_IMAGE:testing-latest
+  only:
+    - testing
+    - develop
+
+# ---------------------------------------------------------------------------
+# Stage 3: Docker Build & Push Production
+# ---------------------------------------------------------------------------
+docker-production:
+  stage: docker-production
+  image: docker:27
+  before_script:
+    - export TAG=$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA-$(date +"%d%m%y")
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u "$CI_REGISTRY_USER" --password-stdin
+  script:
+    - docker build -f Dockerfile.Production -t $CI_REGISTRY_IMAGE:$TAG -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$TAG
+    - docker push $CI_REGISTRY_IMAGE:latest
+  only:
+    refs:
+      - main
+      - "/^v[0-9]+\\.[0-9]+\\.[0-9]+$/"

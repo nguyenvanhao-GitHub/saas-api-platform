@@ -1,0 +1,29 @@
+version: '3.8'
+
+# ==============================================================================
+# SAAS API PLATFORM BACKEND - PRODUCTION DOCKER COMPOSE
+# ==============================================================================
+# Usage:
+#   docker compose -f docker-compose.prod.yml --env-file .env.production up -d
+
+services:
+  app:
+    image: ${CI_REGISTRY_IMAGE:-saas-api-platform-backend}:${TAG:-latest}
+    container_name: saas_api_backend_prod
+    restart: always
+    ports:
+      - "${PORT:-3000}:3000"
+    env_file:
+      - .env.production
+    networks:
+      - saas-prod-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+networks:
+  saas-prod-network:
+    name: saas-prod-network
+    driver: bridge

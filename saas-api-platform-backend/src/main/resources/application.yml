@@ -1,0 +1,97 @@
+server:
+  port: ${PORT:3000}
+
+spring:
+  application:
+    name: saas-api-platform-backend
+  main:
+    allow-bean-definition-overriding: true
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  datasource:
+    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:saas_platform}
+    username: ${DATABASE_USER:postgres}
+    password: ${DATABASE_PASSWORD:12345678}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: ${DATABASE_MIGRATIONS_RUN:true}
+    baseline-on-migrate: true
+    baseline-version: 0
+    validate-on-migrate: false
+    locations: classpath:db/migration
+    table: flyway_schema_history
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 2000ms
+
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    username: ${MAIL_USER:}
+    password: ${MAIL_PASS:}
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /docs
+    operationsSorter: method
+
+saas:
+  auth:
+    secret: ${AUTH_TOKEN_SECRET:saasPlatformSuperSecretKeyForJWTAuthentication2026ShouldBeLongEnough!}
+    ttl-seconds: ${AUTH_TOKEN_TTL_SECONDS:28800}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200,http://localhost:3000,https://saas-web.example.com}
+  storage:
+    s3:
+      endpoint: ${STORAGE_S3_ENDPOINT:}
+      region: ${STORAGE_S3_REGION:us-east-1}
+      bucket: ${STORAGE_S3_BUCKET:saas-invoices-storage}
+      access-key: ${STORAGE_S3_ACCESS_KEY:}
+      secret-key: ${STORAGE_S3_SECRET_KEY:}
+      force-path-style: ${STORAGE_S3_FORCE_PATH_STYLE:true}
+  ratelimit:
+    default-requests-per-minute: 60
+

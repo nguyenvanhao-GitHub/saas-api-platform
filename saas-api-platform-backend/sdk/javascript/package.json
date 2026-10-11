@@ -1,0 +1,26 @@
+{
+  "name": "@smartgate/saas-sdk",
+  "version": "1.0.0",
+  "description": "Official JavaScript & TypeScript SDK for SmartGate SaaS Developer API Platform",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "node dist/index.js"
+  },
+  "keywords": [
+    "saas",
+    "api-gateway",
+    "smartgate",
+    "vietqr",
+    "rate-limiting",
+    "typescript",
+    "sdk"
+  ],
+  "author": "SmartGate Vietnam Technology JSC",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}

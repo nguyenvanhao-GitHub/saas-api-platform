@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Xác nhận thanh toán hóa đơn thành công</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #0b0f19; color: #f1f5f9; margin: 0; padding: 40px 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: #111827; border: 1px solid #1f2937; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .header { background: linear-gradient(135deg, #059669, #10b981); padding: 32px; text-align: center; }
+        .header h1 { margin: 0; color: #ffffff; font-size: 24px; font-weight: 800; }
+        .header p { margin: 8px 0 0 0; color: #d1fae5; font-size: 14px; }
+        .content { padding: 32px; line-height: 1.6; font-size: 14px; color: #cbd5e1; }
+        .invoice-card { background: #030712; border: 1px solid #374151; border-radius: 12px; padding: 20px; margin: 24px 0; }
+        .row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #1f2937; }
+        .row:last-child { border-bottom: none; }
+        .label { color: #9ca3af; font-size: 13px; }
+        .val { color: #ffffff; font-weight: 600; font-size: 13px; }
+        .total-row { margin-top: 8px; padding-top: 8px; border-top: 1px solid #374151; font-size: 15px; font-weight: bold; color: #10b981; }
+        .footer { background: #030712; border-top: 1px solid #1f2937; padding: 20px; text-align: center; font-size: 12px; color: #64748b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Thanh Toán Thành Công</h1>
+            <p>Hóa đơn điện tử đã được tất toán</p>
+        </div>
+        <div class="content">
+            <p>Xin chào <strong th:text="${fullName}" style="color: #ffffff;">Khách hàng</strong>,</p>
+            <p>Hệ thống SaaS API Platform đã ghi nhận thanh toán thành công cho hóa đơn của bạn. Hạn mức và gói cước API tương ứng đã được gia hạn tự động.</p>
+            
+            <div class="invoice-card">
+                <div class="row">
+                    <span class="label">Mã số hóa đơn:</span>
+                    <span class="val" th:text="${invoiceNumber}">INV-2026-0001</span>
+                </div>
+                <div class="row">
+                    <span class="label">Ngày thanh toán:</span>
+                    <span class="val" th:text="${paidAt}">10/09/2026 15:00</span>
+                </div>
+                <div class="row">
+                    <span class="label">Trạng thái:</span>
+                    <span class="val" style="color: #10b981;">ĐÃ THANH TOÁN (PAID)</span>
+                </div>
+                <div class="row total-row">
+                    <span>Tổng tiền thanh toán:</span>
+                    <span th:text="${amountFormatted}">$50.00 USD</span>
+                </div>
+            </div>
+
+            <p>Tệp hóa đơn điện tử chính thức định dạng PDF chất lượng cao đã được đính kèm cùng email này để phục vụ kê khai thuế và lưu trữ doanh nghiệp.</p>
+        </div>
+        <div class="footer">
+            &copy; 2026 SaaS API Platform Inc. Cảm ơn bạn đã tin tưởng dịch vụ!
+        </div>
+    </div>
+</body>
+</html>

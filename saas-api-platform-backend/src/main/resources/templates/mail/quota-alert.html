@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cảnh báo hạn mức sử dụng API Quota</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #0b0f19; color: #f1f5f9; margin: 0; padding: 40px 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: #111827; border: 1px solid #1f2937; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .header { background: linear-gradient(135deg, #d97706, #f59e0b); padding: 32px; text-align: center; }
+        .header h1 { margin: 0; color: #ffffff; font-size: 24px; font-weight: 800; }
+        .header p { margin: 8px 0 0 0; color: #fef3c7; font-size: 14px; }
+        .content { padding: 32px; line-height: 1.6; font-size: 14px; color: #cbd5e1; }
+        .alert-card { background: #030712; border: 1px solid #78350f; border-radius: 12px; padding: 20px; margin: 24px 0; }
+        .footer { background: #030712; border-top: 1px solid #1f2937; padding: 20px; text-align: center; font-size: 12px; color: #64748b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Cảnh Báo Quota API</h1>
+            <p>Hệ thống phát hiện tiêu thụ lưu lượng cao</p>
+        </div>
+        <div class="content">
+            <p>Xin chào <strong th:text="${fullName}" style="color: #ffffff;">Developer</strong>,</p>
+            <p>Bạn đã sử dụng gần chạm ngưỡng hạn mức tối đa cho dịch vụ <strong th:text="${productName}" style="color: #f59e0b;">API Service</strong>.</p>
+            
+            <div class="alert-card">
+                <p style="margin: 0; font-size: 13px;">Lưu lượng hiện tại: <strong th:text="${currentUsage}" style="color: #f59e0b;">85</strong> / <span th:text="${limit}">100</span> req/phút</p>
+                <p style="margin: 8px 0 0 0; font-size: 12px; color: #9ca3af;">Nếu vượt quá hạn mức, các yêu cầu tiếp theo sẽ trả về mã lỗi <code>HTTP 429 Too Many Requests</code>.</p>
+            </div>
+
+            <p>Để đảm bảo trải nghiệm người dùng không bị gián đoạn, vui lòng nâng cấp gói cước trên Marketplace.</p>
+        </div>
+        <div class="footer">
+            &copy; 2026 SaaS API Platform Inc.
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: saas-api-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - PORT=3000
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=saas_platform
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_MIGRATIONS_RUN=true
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MAIL_HOST=mailpit
+      - MAIL_PORT=1025
+      - AUTH_TOKEN_SECRET=saas_api_jwt_secure_secret_key_2026_enterprise_platform_token
+      - AUTH_TOKEN_TTL_SECONDS=28800
+    depends_on:
+      - postgres
+      - redis
+      - mailpit
+    networks:
+      - saas-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: saas-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: saas_platform
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - saas-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: saas-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - saas-network
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: saas-mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025" # Mailpit Web UI
+      - "1025:1025" # SMTP Port
+    networks:
+      - saas-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  saas-network:
+    driver: bridge
